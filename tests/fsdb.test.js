@@ -1,8 +1,5 @@
 import { exportAllDeclaration } from '@babel/types'
-
 import {
-  db,
-  getAllUsers,
   getAllMessages,
   getViewableMessages,
   addUser,
@@ -10,9 +7,38 @@ import {
   resetFirestore
 } from '../server/firestore/fsdb'
 
+const FirestoreMock = {
+  Users: {
+    users: [
+      { id: 1, isAdmin: true, userName: 'Celia' },
+      { id: 2, isAdmin: false, userName: 'Ruslan' },
+      { id: 3, isAdmin: false, userName: 'Keith' },
+      { id: 4, isAdmin: false, userName: 'Taine' }
+    ]
+  },
+  Messages: {
+    messages: [
+      { id: 1, userName: 'Taine', message: 'test 1', recipients: [1, 2, 3, 4, 5], timestamp: 123456788 },
+      { id: 2, userName: 'Taine', message: 'test 2', recipients: [1, 2, 4, 5], timestamp: 123456789 },
+      { id: 3, userName: 'Taine', message: 'test 3', recipients: [1, 2, 5], timestamp: 123456999 },
+      { id: 4, userName: 'Taine', message: 'test 4', recipients: [5], timestamp: 12345 }
+    ]
+  }
+}
+
+const getAllUsersMock = () => {
+  const obj = FirestoreMock.Users
+  return Promise.resolve(obj)
+}
+
+const getAllMessagesMock = () => {
+  const obj = FirestoreMock.Messages
+  return Promise.resolve(obj)
+}
+
 test('getAllUsers returns an array of 4 users', (done) => {
   expect.assertions(1)
-  getAllUsers('TestBed2')
+  getAllUsersMock()
     .then(obj => {
       expect(obj.users).toHaveLength(4)
       done()
@@ -42,11 +68,11 @@ test('addUser adds a new user to db with a sequential userId and if Admin alread
 //       })
 //     })
 // }
-// addUser('TestBed', 'Wizard')
+// addUser('TestBed', 'Wizard')getAllMessages
 //   .then(array => console.log(array))
 
 test('getAllMessages returns an array of 3 messages', (done) => {
-  getAllMessages('TestBed2')
+  getAllMessagesMock()
     .then(obj => {
       expect(obj.messages).toHaveLength(3)
       done()
